@@ -1,0 +1,7 @@
+[build]
+  cmd = "go build -buildvcs=false -o ./tmp/app-binary ./cmd/server"
+  bin = "tmp/app-binary"
+  full_bin = "tmp/app-binary"
+  include_ext = ["go"]
+  exclude_dir = ["vendor"]
+  follow_symlink = true

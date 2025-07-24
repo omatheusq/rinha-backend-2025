@@ -1,13 +1,26 @@
 package payments
 
-import "errors"
+import (
+	"context"
+	"encoding/json"
 
-type PaymentService struct{}
+	"github.com/redis/go-redis/v9"
+)
 
-func NewPaymentService() *PaymentService {
-	return &PaymentService{}
+type PaymentService struct {
+	redisClient *redis.Client
 }
 
-func (s *PaymentService) ProcessPayment(p Payment) error {
-	return errors.New("payment processing not implemented")
+func NewPaymentService(client *redis.Client) *PaymentService {
+	return &PaymentService{
+		redisClient: client,
+	}
+}
+
+func (s *PaymentService) QueuePayment(ctx context.Context, p Payment) error {
+	data, err := json.Marshal(p)
+	if err != nil {
+		return err
+	}
+	return s.redisClient.LPush(ctx, "payments", data).Err()
 }

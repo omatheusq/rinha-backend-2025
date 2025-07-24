@@ -35,7 +35,9 @@ func (h *PaymentHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	p.Timestamp = time.Now()
 
-	if err := h.Service.ProcessPayment(p); err != nil {
+	ctx := r.Context()
+
+	if err := h.Service.QueuePayment(ctx, p); err != nil {
 		log.Println("Payment failed:", err)
 		http.Error(w, "Failed to process payment", http.StatusBadGateway)
 		return
